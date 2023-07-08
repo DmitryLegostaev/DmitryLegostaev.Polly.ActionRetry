@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        project: [ DmitryLegostaev.Polly.ConditionalWait ]
+        project: [ DmitryLegostaev.Polly.ActionRetry ]
 
     runs-on: ubuntu-latest
 

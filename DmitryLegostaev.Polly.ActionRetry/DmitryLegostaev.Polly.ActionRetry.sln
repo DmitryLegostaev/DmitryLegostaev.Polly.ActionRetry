@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{11D9E5D9-CB06-4B9B-8861-AE8C7B3B5F5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmitryLegostaev.Polly.ActionRetrier", "src\DmitryLegostaev.Polly.ActionRetrier\DmitryLegostaev.Polly.ActionRetrier.csproj", "{01EE2438-A47B-4131-8A73-8121000FC2DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmitryLegostaev.Polly.ActionRetry", "src\DmitryLegostaev.Polly.ActionRetry\DmitryLegostaev.Polly.ActionRetry.csproj", "{01EE2438-A47B-4131-8A73-8121000FC2DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

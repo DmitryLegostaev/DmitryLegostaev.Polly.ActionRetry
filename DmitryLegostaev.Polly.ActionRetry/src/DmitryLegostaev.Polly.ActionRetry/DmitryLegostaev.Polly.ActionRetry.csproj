@@ -7,18 +7,18 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <Title>$(AssemblyName)</Title>
     <Authors>Dmitry Legostaev</Authors>
-    <Description>A small class library to provide Action Retrier functionality using Polly v7 library.</Description>
+    <Description>A small class library to provide Action Retry functionality using Polly v7 library.</Description>
     <Copyright>Copyright (c) $(Authors)</Copyright>
     <Version>1.0.0</Version>
-    <PackageProjectUrl>https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetrier</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetrier</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetry</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetry</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>package-icon.png</PackageIcon>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageTags>Polly, Wait, WaitAndRetry, Retry, Handling</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RootNamespace>DmitryLegostaev.Polly.ActionRetrier</RootNamespace>
+    <RootNamespace>DmitryLegostaev.Polly.ActionRetry</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DmitryLegostaev.Polly.ConditionalWait" Version="1.0.0" />
+    <ProjectReference Include="..\..\..\..\CW\DmitryLegostaev.Polly.ConditionalWait\src\DmitryLegostaev.Polly.ConditionalWait\DmitryLegostaev.Polly.ConditionalWait.csproj" />
   </ItemGroup>
 
 </Project>

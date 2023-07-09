@@ -12,7 +12,7 @@ or use a DI to obtain ActionRetry object.
 
 
 #### (optional) Configuration of default RetryCount and BackOffDelay
-You can configure default retry count and backoffdelay for ActionRetry object through its constructor. Defaults are 10/1s
+You can configure default retry count and backoffdelay for ActionRetry object through its constructor. Defaults are 5/1s
 ```csharp
 var actionRetrier = new ActionRetry(20, TimeSpan.FromSeconds(2));
 ```
@@ -21,7 +21,7 @@ or set environment variables
 Environment.SetEnvironmentVariable("ActionRetry__defaultRetryCount", 20.ToString());
 Environment.SetEnvironmentVariable("ActionRetry__defaultBackOffDelay", TimeSpan.FromSeconds(2).ToString());
 ```
-Configuration priority is: Constructor parameters -> Environment variables -> Pre-defined defaults (10/1s)
+Configuration priority is: Constructor parameters -> Environment variables -> Pre-defined defaults (5/1s)
 
 #### Actual usage
 Each method require Action or Func to execute within its body. WaitForPredicateAndGetResult requires a predicate to be passed as argument in addition to Func.

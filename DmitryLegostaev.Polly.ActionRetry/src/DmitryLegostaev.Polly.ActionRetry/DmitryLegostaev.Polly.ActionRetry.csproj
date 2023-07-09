@@ -14,11 +14,12 @@
     <RepositoryUrl>https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetry</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIcon>package-icon.png</PackageIcon>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageTags>Polly, Wait, WaitAndRetry, Retry, Handling</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RootNamespace>DmitryLegostaev.Polly.ActionRetry</RootNamespace>
+    <Configuration>Release</Configuration>
   </PropertyGroup>
 
   <ItemGroup>

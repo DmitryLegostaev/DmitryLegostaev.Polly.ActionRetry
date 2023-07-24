@@ -1,3 +1,7 @@
+[![Nuget](https://img.shields.io/nuget/v/DmitryLegostaev.Polly.ActionRetry.svg)](https://www.nuget.org/packages/DmitryLegostaev.Polly.ActionRetry)
+[![Build](https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetry/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetry/actions/workflows/build.yml)
+![GitHub repo size](https://img.shields.io/github/repo-size/DmitryLegostaev/DmitryLegostaev.Polly.ActionRetry)
+
 ## DmitryLegostaev.Polly.ActionRetry
 
 A small class library to provide Action Retry functionality using Polly v7 library.

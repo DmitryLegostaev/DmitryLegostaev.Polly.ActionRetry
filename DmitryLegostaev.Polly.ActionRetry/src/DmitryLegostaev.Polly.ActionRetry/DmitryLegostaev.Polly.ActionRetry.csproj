@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\CW\DmitryLegostaev.Polly.ConditionalWait\src\DmitryLegostaev.Polly.ConditionalWait\DmitryLegostaev.Polly.ConditionalWait.csproj" />
+    <PackageReference Include="DmitryLegostaev.Polly.ConditionalWait" Version="2.0.0" AllowedVersions="[2.0.0]" />
   </ItemGroup>
 
 </Project>

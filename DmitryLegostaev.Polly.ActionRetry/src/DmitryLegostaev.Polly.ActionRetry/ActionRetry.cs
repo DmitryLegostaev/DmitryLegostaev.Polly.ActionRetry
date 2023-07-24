@@ -7,7 +7,7 @@ namespace DmitryLegostaev.Polly.ActionRetry;
 
 public class ActionRetry : IActionRetry
 {
-    public ActionRetry(int? defaultRetryCount = null, TimeSpan? defaultBackOffDelay = null, ILogger? logger = null)
+    public ActionRetry(int? defaultRetryCount = null, TimeSpan? defaultBackOffDelay = null, IList<Type>? exceptionsToHandle = null, ILogger? logger = null)
     {
         TimeSpan GetTimeSpanValue(TimeSpan? initialTimeSpanValue, string environmentVariableName, TimeSpan defaultTimeSpan) =>
             initialTimeSpanValue ??
@@ -28,6 +28,8 @@ public class ActionRetry : IActionRetry
         this.defaultBackOffDelay =
             GetTimeSpanValue(defaultBackOffDelay, DefaultBackOffDelayEnvironmentVariableName, TimeSpan.FromSeconds(1));
 
+        this.exceptionsToHandle = exceptionsToHandle;
+
         this.logger = logger;
     }
 
@@ -36,40 +38,41 @@ public class ActionRetry : IActionRetry
     private readonly int defaultRetryCount;
     private readonly TimeSpan defaultBackOffDelay;
     private readonly ILogger? logger;
+    private readonly IList<Type>? exceptionsToHandle;
 
     public void DoWithRetry(Action action,
-        int retryCount, TimeSpan backOffDelay,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null)
+        int? retryCount = null, TimeSpan? backOffDelay = null, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null, bool strictCheck = true)
     {
         var waitConfiguration = InitActionRetryConfiguration(retryCount, backOffDelay);
 
-        DoWithRetry(action, waitConfiguration, exceptionsToIgnore, failReason, codePurpose, logger);
+        DoWithRetry(action, waitConfiguration, actionOnRetry, exceptionsToHandle ?? this.exceptionsToHandle, failReason, codePurpose, logger, strictCheck);
     }
 
     public void DoWithRetry(Action action,
-        IWaitConfiguration waitConfiguration,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null)
+        IWaitConfiguration waitConfiguration, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null, bool strictCheck = true)
     {
         PollyPolicies
-            .ActionRetryPolicy(waitConfiguration, exceptionsToIgnore, failReason, codePurpose, logger ?? this.logger)
+            .ActionRetryPolicy(waitConfiguration, actionOnRetry, exceptionsToHandle ?? this.exceptionsToHandle, failReason, codePurpose, logger ?? this.logger, strictCheck)
             .Execute(action);
     }
 
     public T DoWithRetry<T>(Func<T> function,
-        int retryCount, TimeSpan backOffDelay,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null)
+        int? retryCount = null, TimeSpan? backOffDelay = null, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null, bool strictCheck = true)
     {
         var waitConfiguration = InitActionRetryConfiguration(retryCount, backOffDelay);
 
-        return DoWithRetry(function, waitConfiguration, exceptionsToIgnore, failReason, codePurpose, logger);
+        return DoWithRetry(function, waitConfiguration, actionOnRetry, exceptionsToHandle ?? this.exceptionsToHandle, failReason, codePurpose, logger, strictCheck);
     }
 
     public T DoWithRetry<T>(Func<T> function,
-        IWaitConfiguration waitConfiguration,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null)
+        IWaitConfiguration waitConfiguration, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null, bool strictCheck = true)
     {
         return PollyPolicies
-            .ActionRetryPolicy(waitConfiguration, exceptionsToIgnore, failReason, codePurpose, logger ?? this.logger)
+            .ActionRetryPolicy(waitConfiguration, actionOnRetry, exceptionsToHandle ?? this.exceptionsToHandle, failReason, codePurpose, logger ?? this.logger, strictCheck)
             .Execute(function);
     }
 

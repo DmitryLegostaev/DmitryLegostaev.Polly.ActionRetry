@@ -10,7 +10,7 @@ namespace DmitryLegostaev.Polly.ActionRetry.Policies;
 public static class PollyPolicies
 {
     public static Policy ActionRetryPolicy(
-        IWaitConfiguration actionRetryConfiguration,
+        IWaitConfiguration actionRetryConfiguration, Action? actionOnRetry = null,
         IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null,
         bool strictCheck = true)
     {
@@ -21,39 +21,37 @@ public static class PollyPolicies
                 BackoffUtilities.CalculateBackoff(actionRetryConfiguration),
                 (exception, timeSpan, i, context) =>
                 {
-                    // Do not handle exceptions during last retry
-                    if (i < actionRetryConfiguration.RetryCount + 1)
-                    {
-                        logger?.LogDebug(
-                            "An exception {ExceptionType} has occured during action execution. Retry #{RetryAttempt} (Execution #{ExecutionAttempt}): {CodePurpose}",
-                            exception.GetType(), i, i + 1, codePurpose);
-                        return;
-                    }
-
-                    // Do nothing if there are no exceptions during last retry
-                    if (exception is null) return;
-
+                    actionOnRetry?.Invoke();
                     logger?.LogDebug(
-                        "ActionRetry ran out of {RetryCount} retries with {BackOffDelay} BackOff Delay, {BackOffType} BackOff Type, and {BackOffFactor} BackOff Factor. Fail reason: {FailReason}. Executed code purpose: {CodePurpose}",
-                        actionRetryConfiguration.RetryCount, actionRetryConfiguration.BackOffDelay.Humanize(),
-                        actionRetryConfiguration.BackoffType, actionRetryConfiguration.Factor, failReason ?? "Not Specified",
-                        codePurpose ?? "Not Specified");
-
-                    // Re-throw the occured exception if strictCheck is true
-                    if (strictCheck)
-                    {
-                        logger?.LogDebug(
-                            "An exception {ExceptionType} has occured during last retry #{RetryCount} attempt with {ExceptionMessage} message, re-throwing the exception",
-                            exception.GetType(), i, exception.Message);
-                        throw exception;
-                    }
-
-                    // Log warning if strictCheck is false
-                    logger?.LogWarning(
-                        "An exception {Exception} has occured during last retry attempt with {ExceptionMessage} message, stack trace: {ExceptionStackTrace}",
-                        exception, exception.Message, exception.StackTrace);
+                        "An exception {ExceptionType} has occured during action execution. Retry #{RetryAttempt} (Execution #{ExecutionAttempt}): {CodePurpose}",
+                        exception.GetType(), i, i + 1, codePurpose);
                 });
 
-        return waitAndRetryPolicy;
+        var aggregateLastRetryResult = handleResultPolicyBuilder
+            .Fallback(((exception, context, arg3) =>
+            {
+                logger?.LogDebug(
+                    "ActionRetry ran out of {RetryCount} retries with {BackOffDelay} BackOff Delay, {BackOffType} BackOff Type, and {BackOffFactor} BackOff Factor. Fail reason: {FailReason}. Executed code purpose: {CodePurpose}",
+                    actionRetryConfiguration.RetryCount, actionRetryConfiguration.BackOffDelay.Humanize(),
+                    actionRetryConfiguration.BackoffType, actionRetryConfiguration.Factor, failReason ?? "Not Specified",
+                    codePurpose ?? "Not Specified");
+
+                if (strictCheck)
+                {
+                    throw new AggregateException(
+                        $"An exception {exception.GetType()} has occured during Retry #{actionRetryConfiguration.RetryCount} attempt with {exception.Message} message",
+                        exception);
+                }
+
+                // Log warning if strictCheck is false
+                logger?.LogWarning(
+                    "An exception {Exception} has occured during Retry #{RetryAttempt} attempt with {ExceptionMessage} message, stack trace: {ExceptionStackTrace}",
+                    exception, actionRetryConfiguration.RetryCount, exception.Message, exception.StackTrace);
+            }), (exception, context) =>
+            {
+                // Do nothing onFallback
+            });
+
+        return aggregateLastRetryResult.Wrap(waitAndRetryPolicy);
     }
 }

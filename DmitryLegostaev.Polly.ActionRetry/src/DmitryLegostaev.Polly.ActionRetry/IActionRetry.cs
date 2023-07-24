@@ -6,18 +6,22 @@ namespace DmitryLegostaev.Polly.ActionRetry;
 public interface IActionRetry
 {
     public void DoWithRetry(Action action,
-        int retryCount, TimeSpan backOffDelay,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null);
+        int? retryCount = null, TimeSpan? backOffDelay = null, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null,
+        bool strictCheck = true);
 
     public void DoWithRetry(Action action,
-        IWaitConfiguration waitConfiguration,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null);
+        IWaitConfiguration waitConfiguration, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null,
+        bool strictCheck = true);
 
     public T DoWithRetry<T>(Func<T> function,
-        int retryCount, TimeSpan backOffDelay,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null);
+        int? retryCount = null, TimeSpan? backOffDelay = null, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null,
+        bool strictCheck = true);
 
     public T DoWithRetry<T>(Func<T> function,
-        IWaitConfiguration waitConfiguration,
-        IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null);
+        IWaitConfiguration waitConfiguration, Action? actionOnRetry = null,
+        IList<Type>? exceptionsToHandle = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null,
+        bool strictCheck = true);
 }

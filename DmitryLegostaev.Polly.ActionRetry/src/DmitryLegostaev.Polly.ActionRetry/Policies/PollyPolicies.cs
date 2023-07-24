@@ -10,7 +10,7 @@ namespace DmitryLegostaev.Polly.ActionRetry.Policies;
 public static class PollyPolicies
 {
     public static Policy ActionRetryPolicy(
-        IWaitConfiguration actionRetryConfiguration, Action? actionOnRetry = null,
+        IWaitConfiguration actionRetryConfiguration, Action? actionOnRetry = null, Action? resetAction = null,
         IList<Type>? exceptionsToIgnore = null, string? failReason = null, string? codePurpose = null, ILogger? logger = null,
         bool strictCheck = true)
     {
@@ -30,12 +30,6 @@ public static class PollyPolicies
         var aggregateLastRetryResult = handleResultPolicyBuilder
             .Fallback(((exception, context, arg3) =>
             {
-                logger?.LogDebug(
-                    "ActionRetry ran out of {RetryCount} retries with {BackOffDelay} BackOff Delay, {BackOffType} BackOff Type, and {BackOffFactor} BackOff Factor. Fail reason: {FailReason}. Executed code purpose: {CodePurpose}",
-                    actionRetryConfiguration.RetryCount, actionRetryConfiguration.BackOffDelay.Humanize(),
-                    actionRetryConfiguration.BackoffType, actionRetryConfiguration.Factor, failReason ?? "Not Specified",
-                    codePurpose ?? "Not Specified");
-
                 if (strictCheck)
                 {
                     throw new AggregateException(
@@ -49,7 +43,17 @@ public static class PollyPolicies
                     exception, actionRetryConfiguration.RetryCount, exception.Message, exception.StackTrace);
             }), (exception, context) =>
             {
-                // Do nothing onFallback
+                if (resetAction is not null)
+                {
+                    logger?.LogDebug("resetAction is not null. Invoking resetAction");
+                    resetAction?.Invoke();
+                }
+
+                logger?.LogDebug(
+                    "ActionRetry ran out of {RetryCount} retries with {BackOffDelay} BackOff Delay, {BackOffType} BackOff Type, and {BackOffFactor} BackOff Factor. Fail reason: {FailReason}. Executed code purpose: {CodePurpose}",
+                    actionRetryConfiguration.RetryCount, actionRetryConfiguration.BackOffDelay.Humanize(),
+                    actionRetryConfiguration.BackoffType, actionRetryConfiguration.Factor, failReason ?? "Not Specified",
+                    codePurpose ?? "Not Specified");
             });
 
         return aggregateLastRetryResult.Wrap(waitAndRetryPolicy);

@@ -1,0 +1,21 @@
+name: Publish to NuGet.org on GitHub release or workflow_dispatch
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        project: [ DmitryLegostaev.Polly.ActionRetry ]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Use custom GitHub action
+        uses: DmitryLegostaev/DmitryLegostaev.GitHubActions.PushNupkgToNuget@main
+        with:
+          PROJECT_NAME: ${{ matrix.project }}
+          NUGET_API_KEY: ${{ secrets.NUGET_GALLERY_SECRET }}
